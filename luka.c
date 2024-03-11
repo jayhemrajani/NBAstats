@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <ctype.h>
 
 
 
@@ -18,7 +19,7 @@ typedef struct stats {
   double ft; //free throw percentage
 } player_stat;
 
-int read_stats(const char *in_file) {
+int read_stats(const char *in_file, const char *opponent_input) {
 
   assert(in_file != NULL);
 
@@ -33,8 +34,9 @@ int read_stats(const char *in_file) {
 
   player_stat player;
 
-  int data = 0;
+  int data = 1;
   int record = 1;
+  int found = 0;
 
   while (record != EOF) {
     record = fscanf(file_rdr, "%3[^;];%d:%*d;%lf;%lf;%lf;%d;%d;%d;%d;%d;%d\n", player.opponent, &player.min, &player.fg, &player.tp, &player.ft, &player.reb, &player.ast, &player.stls, &player.blks, &player.to, &player.pts);
@@ -47,7 +49,10 @@ int read_stats(const char *in_file) {
     }
     player.tp /= 10;
 
-  printf("Opponent: %s\nMinutes: %d\nFG%%: %.2lf\nThree Point%%: %.2lf\nFT%%: %.2lf\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nPoints: %d\n\n\n", player.opponent, player.min, player.fg, player.tp, player.ft, player.reb, player.ast, player.stls, player.blks, player.to, player.pts);
+  if (strcmp(player.opponent, opponent_input) == 0) { 
+    printf("\nGame Number: %d\nOpponent: %s\nMinutes: %d\nFG%%: %.2lf%%\nThree Point%%: %.2lf%%\nFT%%: %.2lf%%\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nPoints: %d\n\n", data, player.opponent, player.min, player.fg, player.tp, player.ft, player.reb, player.ast, player.stls, player.blks, player.to, player.pts);
+    found = 1;
+  }
 
   //printf("record: %d\n", record);
   //printf("data: %d\n", data);
@@ -67,22 +72,39 @@ int read_stats(const char *in_file) {
   }
   data++;
 }
+
   fclose(file_rdr);
   file_rdr = NULL;
+
+  if (!found) {
+    printf("No stats found for this game!\n");
+    return -1;
+  }
   return 0;
 }
 
 void prompt_user_and_read_stats() {
+
   char in_file[256];
+  char opponent_input[4];
   printf("Enter the name of the file to read: ");
   fgets(in_file, sizeof(in_file), stdin);
 
   in_file[strcspn(in_file, "\n")] = '\0';
 
-  int result = read_stats(in_file);
+  printf("Enter the opponent of the game that you would like to see stats for: ");
+  fgets(opponent_input, sizeof(opponent_input), stdin);
+
+  opponent_input[strcspn(opponent_input, "\n")] = '\0';
+
+  for (int i = 0; i < strlen(opponent_input); i++) {
+    opponent_input[i] = toupper(opponent_input[i]);
+  }
+
+  int result = read_stats(in_file, opponent_input);
 
   if (result = 0) {
-    printf("Error occurred while processing file.\n");
+    printf("Stats for the game againstt %s were not found!\n",  opponent_input);
   }
 }
 
