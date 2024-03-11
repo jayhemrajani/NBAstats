@@ -39,9 +39,13 @@ int read_stats(const char *in_file) {
   while (record != EOF) {
     record = fscanf(file_rdr, "%3[^;];%d:%*d;%lf;%lf;%lf;%d;%d;%d;%d;%d;%d\n", player.opponent, &player.min, &player.fg, &player.tp, &player.ft, &player.reb, &player.ast, &player.stls, &player.blks, &player.to, &player.pts);
 
-    /*player.fg *= .01;
-    player.tp *= .01;
-    player.ft *= .01;*/
+    player.fg /= 10;
+    if (player.ft == 1.000) {
+      player.ft *= 100.0;
+    } else {
+      player.ft /= 10;
+    }
+    player.tp /= 10;
 
   printf("Opponent: %s\nMinutes: %d\nFG%%: %.2lf\nThree Point%%: %.2lf\nFT%%: %.2lf\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nPoints: %d\n\n\n", player.opponent, player.min, player.fg, player.tp, player.ft, player.reb, player.ast, player.stls, player.blks, player.to, player.pts);
 
