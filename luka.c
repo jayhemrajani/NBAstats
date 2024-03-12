@@ -74,12 +74,12 @@ int read_stats(const char *in_file, const char *opponent_input) {
   //printf("record: %d\n", record);
   //printf("data: %d\n", data);
 
-  if (record != 11) {
+  /*if (record != 11) {
     fclose(file_rdr);
     file_rdr = NULL;
     printf("Not enough data!\n");
     return -1;
-  }
+  }*/
 
   if ((data == 0) && (record == EOF)) {
     fclose(file_rdr);
@@ -91,11 +91,12 @@ int read_stats(const char *in_file, const char *opponent_input) {
 }
 
 if (!found) {
-  printf("No stats found for this game!\n");
+  printf("Stats for the game against %s were not found!\nEither they haven't matched up this season, or there was an error in your spelling\n",  opponent_input);
   return -1;
+} else {
+  printf("Average Stats Against %s In %d Games This Season:\nMinutes: %.2lf\nPoints: %.2lf\nRebounds: %.2lf\nAssists: %.2lf\nSteals: %.2lf\nBlocks: %.2lf\nTurnovers: %.2lf\nFG%%: %.2lf\nThree Point%%: %.2lf\nFT%%: %.2lf\n\n",
+           opponent_input, games, sum_min / games, sum_pts / games, sum_reb / games, sum_ast / games, sum_stls / games, sum_blks / games, sum_to / games, sum_fg / games, sum_tp / games, sum_ft / games);
 }
-  printf("Average Stats Against %s:\nMinutes: %.2lf\nPoints: %.2lf\nRebounds: %.2lf\nAssists: %.2lf\nSteals: %.2lf\nBlocks: %.2lf\nTurnovers: %.2lf\nFG%%: %.2lf\nThree Point%%: %.2lf\nFT%%: %.2lf\n",
-           player.opponent, sum_min / games, sum_pts / games, sum_reb / games, sum_ast / games, sum_stls / games, sum_blks / games, sum_to / games, sum_fg / games, sum_tp / games, sum_ft / games);
   fclose(file_rdr);
   file_rdr = NULL;
   return 0;
@@ -121,9 +122,9 @@ void prompt_user_and_read_stats() {
 
   int result = read_stats(in_file, opponent_input);
 
-  if (result == 0) {
+  /*if (result != 0) {
     printf("Stats for the game against %s were not found!\n",  opponent_input);
-  }
+  }*/
 }
 
 int main() {
