@@ -38,6 +38,10 @@ int read_stats(const char *in_file, const char *opponent_input) {
   int record = 1;
   int found = 0;
 
+  int games = 0;
+  double sum_min = 0, sum_pts = 0, sum_reb = 0, sum_ast = 0, sum_stls = 0, sum_blks = 0, sum_to = 0, sum_fg = 0, sum_tp = 0, sum_ft = 0;
+
+
   while (record != EOF) {
     record = fscanf(file_rdr, "%3[^;];%d:%*d;%lf;%lf;%lf;%d;%d;%d;%d;%d;%d\n", player.opponent, &player.min, &player.fg, &player.tp, &player.ft, &player.reb, &player.ast, &player.stls, &player.blks, &player.to, &player.pts);
 
@@ -50,8 +54,21 @@ int read_stats(const char *in_file, const char *opponent_input) {
     player.tp /= 10;
 
   if (strcmp(player.opponent, opponent_input) == 0) { 
-    printf("\nGame Number: %d\nOpponent: %s\nMinutes: %d\nFG%%: %.2lf%%\nThree Point%%: %.2lf%%\nFT%%: %.2lf%%\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nPoints: %d\n\n", data, player.opponent, player.min, player.fg, player.tp, player.ft, player.reb, player.ast, player.stls, player.blks, player.to, player.pts);
+    printf("\n\nGame Number: %d\nOpponent: %s\nMinutes Played: %d\nPoints: %d\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nFG%%: %.2lf%%\nThree Point%%: %.2lf%%\nFT%%: %.2lf%%\n\n", data, player.opponent, player.min, player.pts, player.reb, player.ast, player.stls, player.blks, player.to, player.fg, player.tp, player.ft);
     found = 1;
+
+    sum_min += player.min;
+    sum_pts += player.pts;
+    sum_reb += player.reb;
+    sum_ast += player.ast;
+    sum_stls += player.stls;
+    sum_blks += player.blks;
+    sum_to += player.to;
+    sum_fg += player.fg;
+    sum_tp += player.tp;
+    sum_ft += player.ft;
+
+    games++;
   }
 
   //printf("record: %d\n", record);
@@ -73,13 +90,14 @@ int read_stats(const char *in_file, const char *opponent_input) {
   data++;
 }
 
+if (!found) {
+  printf("No stats found for this game!\n");
+  return -1;
+}
+  printf("Average Stats Against %s:\nMinutes: %.2lf\nPoints: %.2lf\nRebounds: %.2lf\nAssists: %.2lf\nSteals: %.2lf\nBlocks: %.2lf\nTurnovers: %.2lf\nFG%%: %.2lf\nThree Point%%: %.2lf\nFT%%: %.2lf\n",
+           player.opponent, sum_min / games, sum_pts / games, sum_reb / games, sum_ast / games, sum_stls / games, sum_blks / games, sum_to / games, sum_fg / games, sum_tp / games, sum_ft / games);
   fclose(file_rdr);
   file_rdr = NULL;
-
-  if (!found) {
-    printf("No stats found for this game!\n");
-    return -1;
-  }
   return 0;
 }
 
@@ -103,8 +121,8 @@ void prompt_user_and_read_stats() {
 
   int result = read_stats(in_file, opponent_input);
 
-  if (result = 0) {
-    printf("Stats for the game againstt %s were not found!\n",  opponent_input);
+  if (result == 0) {
+    printf("Stats for the game against %s were not found!\n",  opponent_input);
   }
 }
 
