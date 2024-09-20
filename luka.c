@@ -5,19 +5,33 @@
 
 
 
-typedef struct stats {
-  char opponent[3];
-  int min;
-  int pts;
-  int reb;
-  int ast;
-  int stls;
-  int blks;
-  int to;
-  double fg; //field goal percentage
-  double tp; //three point percentage
-  double ft; //free throw percentage
-} player_stat;
+typedef struct player_stats {
+    int rank;
+    int game;
+    int age;
+    char team[3];
+    char opp[3];
+    char outcome[10];
+    int mp;
+    int fg;
+    int fga;
+    double fg_pct;
+    int tp;
+    int tpa; //three pointer attmepted
+    double tp_pct;
+    int ft;
+    int fta;
+    double ft_pct;
+    int orb;
+    int drb;
+    int trb;
+    int ast;
+    int stl;
+    int blk;
+    int tov;
+    int pf; //personal fouls
+    int pts;
+}player_stat;
 
 int read_stats(const char *in_file, const char *opponent_input) {
 
@@ -43,7 +57,10 @@ int read_stats(const char *in_file, const char *opponent_input) {
 
 
   while (record != EOF) {
-    record = fscanf(file_rdr, "%3[^;];%d:%*d;%lf;%lf;%lf;%d;%d;%d;%d;%d;%d\n", player.opponent, &player.min, &player.fg, &player.tp, &player.ft, &player.reb, &player.ast, &player.stls, &player.blks, &player.to, &player.pts);
+    record = fscanf(file_rdr, "%d,%d,%*d,%d,%[,,],,%[,,],%[,],%*d,%d,%d,%d,%lf,%d,%d,%lf,%d,%d,%lf,%d,%d,%d,%d,%d,%d,%d,%d,%d,%*d,%*d", 
+        &player.rank, &player.game, &player.age, player.team, player.opp, player.outcome, &player.mp, &player.fg, &player.fga, 
+        &player.fg_pct, &player.tp, &player.tpa, &player.tp_pct, &player.ft, &player.fta, &player.ft_pct, &player.orb, &player.drb, 
+        &player.trb, &player.ast, &player.stl, &player.blk, &player.tov, &player.pf, &player.pts);
 
     player.fg /= 10;
     if (player.ft == 1.000) {
@@ -53,17 +70,17 @@ int read_stats(const char *in_file, const char *opponent_input) {
     }
     player.tp /= 10;
 
-  if (strcmp(player.opponent, opponent_input) == 0) { 
+  if (strcmp(player.opp, opponent_input) == 0) { 
     printf("\n\nGame Number: %d\nOpponent: %s\nMinutes Played: %d\nPoints: %d\nRebounds: %d\nAssists: %d\nSteals: %d\nBlocks: %d\nTurnovers: %d\nFG%%: %.2lf%%\nThree Point%%: %.2lf%%\nFT%%: %.2lf%%\n\n", data, player.opponent, player.min, player.pts, player.reb, player.ast, player.stls, player.blks, player.to, player.fg, player.tp, player.ft);
     found = 1;
 
-    sum_min += player.min;
+    sum_min += player.mp;
     sum_pts += player.pts;
-    sum_reb += player.reb;
+    sum_reb += player.trb;
     sum_ast += player.ast;
-    sum_stls += player.stls;
-    sum_blks += player.blks;
-    sum_to += player.to;
+    sum_stls += player.stl;
+    sum_blks += player.blk;
+    sum_to += player.tov;
     sum_fg += player.fg;
     sum_tp += player.tp;
     sum_ft += player.ft;
